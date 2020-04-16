@@ -2,11 +2,11 @@ package main
 
 import (
 	"github.com/mariogarcia/kpia/api"
-	"log"
-	"net/http"
 )
 
 func main() {
-	service := api.New()
-	log.Fatal(http.ListenAndServe(":8000", service.Router()))
+	api := api.API{}
+	api.InitDB("postgres://kpia:kpia@localhost/kpia")
+	api.InitHandlers()
+	api.Startup(":8080")
 }

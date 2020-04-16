@@ -1,19 +1,31 @@
 package projects
 
-var projects []Project = []Project{
-	Project{Name: "Taiga"},
-}
+import (
+	"database/sql"
+	"github.com/mariogarcia/kpia/utils"
+)
 
-var members []Member = []Member{
-	Member{Name: "John"},
+// Service represents busines logic for projects
+type Service struct {
+	DB *sql.DB
 }
 
 // ListProjects lists all Piweek projects of all times
-func ListProjects() []Project {
-	return projects
+func (service *Service) ListProjects(pagination utils.Pagination) utils.PagedResult {
+	return utils.PagedResult{}
 }
 
-// ListProjectMembers list all members of a given project
-func ListProjectMembers(projectID int16) []Member {
-	return members
+// FindAllMembersByProjectID list all members of a given project
+func (service *Service) FindAllMembersByProjectID(projectID string) utils.PagedResult {
+	return utils.PagedResult{}
+}
+
+// FindProjectByID is
+func (service *Service) FindProjectByID(projectID string) Project {
+	return Project{}
+}
+
+// FindProjectMemberByID is
+func (service *Service) FindProjectMemberByID(projectID, memberID string) ProjectMember {
+	return ProjectMember{}
 }

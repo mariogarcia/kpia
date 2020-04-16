@@ -1,20 +1,42 @@
 package api
 
 import (
+	"github.com/gorilla/mux"
 	"github.com/mariogarcia/kpia/projects"
+	"github.com/mariogarcia/kpia/utils"
 	"net/http"
 )
 
 // Lists all Piweek's projects of all times
-func (a *api) listProjects(response http.ResponseWriter, request *http.Request) {
-	projects := projects.ListProjects()
+func (api *API) listProjects(response http.ResponseWriter, request *http.Request) {
+	pagination := utils.GetPagination(request.URL.Query())
+	service := projects.Service{DB: api.DB}
 
-	renderJSON(response, projects)
+	renderJSON(response, service.ListProjects(pagination))
 }
 
 // Gets a project by its id
-func (a *api) getProject(response http.ResponseWriter, request *http.Request) {
-	project := projects.ListProjects()[0]
+func (api *API) getProject(response http.ResponseWriter, request *http.Request) {
+	params := mux.Vars(request)
+	ID := params["project"]
+	service := projects.Service{DB: api.DB}
 
-	renderJSON(response, project)
+	renderJSON(response, service.FindProjectByID(ID))
+}
+
+func (api *API) listProjectMembers(response http.ResponseWriter, request *http.Request) {
+	params := mux.Vars(request)
+	ID := params["project"]
+	service := projects.Service{DB: api.DB}
+
+	renderJSON(response, service.FindAllMembersByProjectID(ID))
+}
+
+func (api *API) getProjectMember(response http.ResponseWriter, request *http.Request) {
+	params := mux.Vars(request)
+	projectID := params["project"]
+	memberID := params["member"]
+	service := projects.Service{DB: api.DB}
+
+	renderJSON(response, service.FindProjectMemberByID(projectID, memberID))
 }

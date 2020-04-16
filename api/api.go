@@ -1,29 +1,45 @@
 package api
 
 import (
+	"database/sql"
+	"fmt"
 	"github.com/gorilla/mux"
+	_ "github.com/lib/pq"
+	"log"
 	"net/http"
 )
 
-type api struct {
-	router http.Handler
+// API represents the whole REST API application
+type API struct {
+	router *mux.Router
+	DB     *sql.DB
 }
 
-type Server interface {
-	Router() http.Handler
+// InitDB initializes database
+func (api *API) InitDB(url string) {
+	log.Println(fmt.Sprintf("initializing database %s", url))
+	db, err := sql.Open("postgres", url)
+	api.DB = db
+
+	if err != nil {
+		LoadFixtures(api.DB)
+	} else {
+		log.Fatal(err)
+	}
 }
 
-func (a *api) Router() http.Handler {
-	return a.router
+// InitHandlers mappings between paths and handlers
+func (api *API) InitHandlers() {
+	log.Println("initializing handlers")
+	api.router = mux.NewRouter()
+	api.router.HandleFunc("/projects", api.listProjects).Methods(http.MethodGet)
+	api.router.HandleFunc("/projects/{project}", api.getProject).Methods(http.MethodGet)
+	api.router.HandleFunc("/projects/{project}/members", api.listProjectMembers).Methods(http.MethodGet)
+	api.router.HandleFunc("/projects/{project}/members/{member}", api.getProjectMember).Methods(http.MethodGet)
 }
 
-func New() Server {
-	a := &api{}
-	r := mux.NewRouter()
-
-	r.HandleFunc("/projects", a.listProjects).Methods(http.MethodGet)
-	r.HandleFunc("/projects/:id", a.getProject).Methods(http.MethodGet)
-
-	a.router = r
-	return a
+// Startup initializes API
+func (api *API) Startup(addr string) {
+	log.Println("starting app...")
+	log.Fatal(http.ListenAndServe(addr, api.router))
 }
