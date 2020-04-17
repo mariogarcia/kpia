@@ -20,13 +20,16 @@ func (service *Service) ListProjects(pagination utils.Pagination) utils.PagedRes
 
 	// looping results
 	for rows.Next() {
-		pro := Project{}
-		rows.Scan(&pro.ID, &pro.Name, &pro.Description)
-
-		results = append(results, pro)
+		results = append(results, mapToProject(rows))
 	}
 
 	return utils.PagedResult{}
+}
+
+func mapToProject(rows *sql.Rows) Project {
+	pro := Project{}
+	rows.Scan(&pro.ID, &pro.Name, &pro.Description)
+	return pro
 }
 
 // FindAllMembersByProjectID list all members of a given project
