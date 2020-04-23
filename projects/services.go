@@ -2,6 +2,7 @@ package projects
 
 import (
 	"database/sql"
+	"fmt"
 	"github.com/mariogarcia/kpia/utils"
 )
 
@@ -36,19 +37,23 @@ func mapToProject(rows *sql.Rows) Project {
 func (service *Service) FindAllMembersByProjectID(projectID string) utils.PagedResult {
 	rows, err := service.DB.Query(`SELECT * FROM projects_members WHERE project_id = $1`, projectID)
 
+	fmt.Println(rows)
+	fmt.Println(err)
 	return utils.PagedResult{}
 }
 
 // FindProjectByID is
 func (service *Service) FindProjectByID(projectID string) Project {
-	row, err := service.DB.QueryRow(`SELECT * FROM project WHERE id = $1`, projectID)
+	row := service.DB.QueryRow(`SELECT * FROM project WHERE id = $1`, projectID)
 
+	fmt.Println(row)
 	return Project{}
 }
 
 // FindProjectMemberByID is
 func (service *Service) FindProjectMemberByID(projectID, memberID string) ProjectMember {
-	row, err := service.DB.QueryRow(`SELECT * FROM project_member WHERE project = $1 AND member = $2`, projectID, memberID)
+	row := service.DB.QueryRow(`SELECT * FROM project_member WHERE project = $1 AND member = $2`, projectID, memberID)
 
+	fmt.Println(row)
 	return ProjectMember{}
 }

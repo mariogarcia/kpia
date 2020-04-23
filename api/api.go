@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/gorilla/mux"
-	_ "github.com/lib/pq"
+	"github.com/lib/pq" // PosgreSQL driver
 	"log"
 	"net/http"
 )
@@ -17,14 +17,15 @@ type API struct {
 
 // InitDB initializes database
 func (api *API) InitDB(url string) {
-	log.Println(fmt.Sprintf("initializing database %s", url))
+	log.Println(fmt.Sprintf("initializing database: %s", url))
 	db, err := sql.Open("postgres", url)
 	api.DB = db
 
-	if err != nil {
+	if err == nil {
 		LoadFixtures(api.DB)
 	} else {
-		log.Fatal(err)
+		error := err.(*pq.Error)
+		log.Fatal(error.Code.Name())
 	}
 }
 

@@ -6,7 +6,7 @@ import (
 
 func main() {
 	api := api.API{}
-	api.InitDB("postgres://kpia:kpia@localhost/kpia")
+	api.InitDB("postgres://kpia:kpia@localhost/kpia?sslmode=disable")
 	api.InitHandlers()
 	api.Startup(":8080")
 }
